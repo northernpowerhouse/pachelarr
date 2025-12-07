@@ -113,23 +113,211 @@ docker run -d \
 ### Using Docker Compose (Recommended)
 
 1. **Clone or download this repository**
+
+2. **Download the docker-compose.yml**
+
+You can download the compose file directly or copy it from the repository:
+
+```bash
+# Download directly
+curl -O https://raw.githubusercontent.com/northernpowerhouse/pachelarr/main/docker-compose.yml
+
+# Or if you prefer wget
+wget https://raw.githubusercontent.com/northernpowerhouse/pachelarr/main/docker-compose.yml
+```
+
+**Or copy this into your docker-compose.yml:**
+
+<details>
+<summary>Click to expand docker-compose.yml</summary>
+
+```yaml
+services:
+  pachelarr:
+    image: ghcr.io/northernpowerhouse/pachelarr:latest
+    container_name: pachelarr
+    ports:
+      - "6800:6800"
+    environment:
+      # === REQUIRED CONFIGURATION ===
+      # Prowlarr connection settings
+      - PROWLARR_URL=http://your-prowlarr-host:9696
+      - PROWLARR_API_KEY=your_prowlarr_api_key_here
+      
+      # Torbox API key for torrent caching
+      - TORBOX_API_KEY=your_torbox_api_key_here
+      
+      # Pachelarr API key (used by Radarr/Sonarr to authenticate)
+      - CACHEBOX_API_KEY=your_pachelarr_api_key_here
+      
+      # === PACHELARR SETTINGS ===
+      # Port to listen on (default: 8080)
+      - CACHEBOX_PORT=6800
+      
+      # Log level: DEBUG, INFO, WARNING, ERROR (default: INFO)
+      - CACHEBOX_LOG_LEVEL=INFO
+      
+      # Seeders boost value added to cached torrents (default: 10000)
+      - CACHEBOX_SEEDERS_BOOST=10000
+      
+      # Fallback query for category-only requests (improves Sonarr "Test" behavior)
+      # Set to empty string to disable (default: "")
+      - CACHEBOX_TEST_FALLBACK_QUERY=
+      
+      # === TMDB CONFIGURATION ===
+      # TMDB API key for looking up movie/TV titles from IMDb/TVDB/TMDB IDs
+      # Get a free key at: https://www.themoviedb.org/settings/api
+      # Without this, ID-only searches (common with Radarr/Sonarr) will fail
+      - TMDB_API_KEY=your_tmdb_api_key_here
+      
+      # === TORBOX SETTINGS ===
+      # Torbox API endpoint for checking cached torrents
+      - TORBOX_CHECK_URL=https://api.torbox.app/v1/api/torrents/checkcached
+      
+      # Number of hashes to check per Torbox API request (default: 100, max: 100)
+      - TORBOX_CHUNK_SIZE=100
+      
+      # Maximum retry attempts for Torbox API failures (default: 3)
+      - TORBOX_MAX_RETRIES=3
+      
+      # Backoff delay in seconds between retries (default: 0.5)
+      - TORBOX_RETRY_BACKOFF=0.5
+      
+      # === TRACKER SCRAPING SETTINGS ===
+      # Enable direct UDP tracker scraping for seeders/leechers (default: false)
+      # Warning: Enables direct contact with public trackers
+      - TRACKER_SCRAPE_ENABLED=false
+      
+      # Number of concurrent tracker scrape requests (default: 4)
+      - TRACKER_SCRAPE_CONCURRENCY=4
+      
+      # Timeout in seconds for tracker scrape requests (default: 5.0)
+      - TRACKER_SCRAPE_TIMEOUT=5.0
+      
+      # Number of info hashes to scrape per tracker request (default: 50)
+      - TRACKER_SCRAPE_BATCH_SIZE=50
+    restart: unless-stopped
+```
+
+</details>
+
+**For Docker Compose GUI users (Portainer, Dockge, etc.):**
+- Copy the compose content above
+- Paste it into your Docker Compose editor
+- Update the environment variables with your API keys
+- Deploy the stack
+
 ```bash
 git clone https://github.com/northernpowerhouse/pachelarr.git
 cd pachelarr
 ```
 
 1. **Clone or download this repository**
+
+2. **Download the docker-compose.yml**
+
+You can download the compose file directly or copy it from the repository:
+
+```bash
+# Download directly
+curl -O https://raw.githubusercontent.com/northernpowerhouse/pachelarr/main/docker-compose.yml
+
+# Or if you prefer wget
+wget https://raw.githubusercontent.com/northernpowerhouse/pachelarr/main/docker-compose.yml
+```
+
+**Or copy this into your docker-compose.yml:**
+
+<details>
+<summary>Click to expand docker-compose.yml</summary>
+
+```yaml
+services:
+  pachelarr:
+    image: ghcr.io/northernpowerhouse/pachelarr:latest
+    container_name: pachelarr
+    ports:
+      - "6800:6800"
+    environment:
+      # === REQUIRED CONFIGURATION ===
+      # Prowlarr connection settings
+      - PROWLARR_URL=http://your-prowlarr-host:9696
+      - PROWLARR_API_KEY=your_prowlarr_api_key_here
+      
+      # Torbox API key for torrent caching
+      - TORBOX_API_KEY=your_torbox_api_key_here
+      
+      # Pachelarr API key (used by Radarr/Sonarr to authenticate)
+      - CACHEBOX_API_KEY=your_pachelarr_api_key_here
+      
+      # === PACHELARR SETTINGS ===
+      # Port to listen on (default: 8080)
+      - CACHEBOX_PORT=6800
+      
+      # Log level: DEBUG, INFO, WARNING, ERROR (default: INFO)
+      - CACHEBOX_LOG_LEVEL=INFO
+      
+      # Seeders boost value added to cached torrents (default: 10000)
+      - CACHEBOX_SEEDERS_BOOST=10000
+      
+      # Fallback query for category-only requests (improves Sonarr "Test" behavior)
+      # Set to empty string to disable (default: "")
+      - CACHEBOX_TEST_FALLBACK_QUERY=
+      
+      # === TMDB CONFIGURATION ===
+      # TMDB API key for looking up movie/TV titles from IMDb/TVDB/TMDB IDs
+      # Get a free key at: https://www.themoviedb.org/settings/api
+      # Without this, ID-only searches (common with Radarr/Sonarr) will fail
+      - TMDB_API_KEY=your_tmdb_api_key_here
+      
+      # === TORBOX SETTINGS ===
+      # Torbox API endpoint for checking cached torrents
+      - TORBOX_CHECK_URL=https://api.torbox.app/v1/api/torrents/checkcached
+      
+      # Number of hashes to check per Torbox API request (default: 100, max: 100)
+      - TORBOX_CHUNK_SIZE=100
+      
+      # Maximum retry attempts for Torbox API failures (default: 3)
+      - TORBOX_MAX_RETRIES=3
+      
+      # Backoff delay in seconds between retries (default: 0.5)
+      - TORBOX_RETRY_BACKOFF=0.5
+      
+      # === TRACKER SCRAPING SETTINGS ===
+      # Enable direct UDP tracker scraping for seeders/leechers (default: false)
+      # Warning: Enables direct contact with public trackers
+      - TRACKER_SCRAPE_ENABLED=false
+      
+      # Number of concurrent tracker scrape requests (default: 4)
+      - TRACKER_SCRAPE_CONCURRENCY=4
+      
+      # Timeout in seconds for tracker scrape requests (default: 5.0)
+      - TRACKER_SCRAPE_TIMEOUT=5.0
+      
+      # Number of info hashes to scrape per tracker request (default: 50)
+      - TRACKER_SCRAPE_BATCH_SIZE=50
+    restart: unless-stopped
+```
+
+</details>
+
+**For Docker Compose GUI users (Portainer, Dockge, etc.):**
+- Copy the compose content above
+- Paste it into your Docker Compose editor
+- Update the environment variables with your API keys
+- Deploy the stack
+
 ```bash
 git clone https://github.com/northernpowerhouse/pachelarr.git
 cd pachelarr
 ```
 
-2. **Get your API keys**
+3. **Get your API keys**
    - **Torbox API Key:** https://torbox.app/settings (under API section)
    - **Prowlarr API Key:** Prowlarr → Settings → General → API Key
    - **TMDB API Key:** https://www.themoviedb.org/settings/api (free account required)
 
-3. **Configure environment variables**
+4. **Configure environment variables**
 
 Edit `docker-compose.yml` and update these required values:
 ```yaml
@@ -140,12 +328,12 @@ Edit `docker-compose.yml` and update these required values:
 - CACHEBOX_API_KEY=your_pachelarr_api_key_here  # Any random string
 ```
 
-4. **Start the service**
+5. **Start the service**
 ```bash
 docker compose up -d
 ```
 
-5. **Configure Radarr/Sonarr**
+6. **Configure Radarr/Sonarr**
 
 Add Pachelarr as a Torznab indexer:
 - **URL:** `http://pachelarr-host:6800/api`
