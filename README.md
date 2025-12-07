@@ -88,11 +88,39 @@ Pachelarr sits between your media management tools (Radarr/Sonarr) and Prowlarr,
 - Torbox account and API key
 - TMDB API key (free, required for ID-based searches)
 
-### Quick Start
+
+### Using Docker Image Directly
+
+You can also pull and run the pre-built Docker image without cloning the repository:
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/northernpowerhouse/pachelarr:latest
+
+# Run with docker run
+docker run -d \
+  --name pachelarr \
+  -p 6800:6800 \
+  -e PROWLARR_URL=http://your-prowlarr-host:9696 \
+  -e PROWLARR_API_KEY=your_prowlarr_api_key_here \
+  -e TORBOX_API_KEY=your_torbox_api_key_here \
+  -e CACHEBOX_API_KEY=your_pachelarr_api_key_here \
+  -e TMDB_API_KEY=your_tmdb_api_key_here \
+  --restart unless-stopped \
+  ghcr.io/northernpowerhouse/pachelarr:latest
+```
+
+### Using Docker Compose (Recommended)
 
 1. **Clone or download this repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/northernpowerhouse/pachelarr.git
+cd pachelarr
+```
+
+1. **Clone or download this repository**
+```bash
+git clone https://github.com/northernpowerhouse/pachelarr.git
 cd pachelarr
 ```
 

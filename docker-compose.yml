@@ -1,6 +1,7 @@
 services:
   pachelarr:
-    build: .
+    image: ghcr.io/northernpowerhouse/pachelarr:latest
+    container_name: pachelarr
     ports:
       - "6800:6800"
     environment:
@@ -61,3 +62,4 @@ services:
       
       # Number of info hashes to scrape per tracker request (default: 50)
       - TRACKER_SCRAPE_BATCH_SIZE=50
+    restart: unless-stopped
