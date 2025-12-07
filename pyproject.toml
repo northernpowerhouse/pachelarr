@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "pachelarr"
+version = "0.1.0"
+description = "A Prowlarr to Torbox proxy with caching"
+authors = ["Pachelarr Contributors"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.70.0"
+uvicorn = "^0.15.0"
+aiohttp = "^3.7.4"
+lxml = "^4.6.3"
+python-dotenv = "^0.19.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+pytest-asyncio = "^0.20.3"
