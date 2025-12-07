@@ -10,7 +10,7 @@ from urllib.parse import urljoin, parse_qs, unquote
 app = FastAPI()
 PACHELARR_LOG_LEVEL = os.getenv("PACHELARR_LOG_LEVEL", "INFO").upper()
 logging.basicConfig(level=getattr(logging, PACHELARR_LOG_LEVEL, logging.INFO))
-logger = logging.getLogger("cachebox")
+logger = logging.getLogger("pachelarr")
 
 PROWLARR_URL = os.getenv("PROWLARR_URL")
 PROWLARR_API_KEY = os.getenv("PROWLARR_API_KEY")
