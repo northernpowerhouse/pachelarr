@@ -14,21 +14,21 @@ services:
       - TORBOX_API_KEY=your_torbox_api_key_here
       
       # Pachelarr API key (used by Radarr/Sonarr to authenticate)
-      - CACHEBOX_API_KEY=your_pachelarr_api_key_here
+      - PACHELARR_API_KEY=your_pachelarr_api_key_here
       
       # === PACHELARR SETTINGS ===
       # Port to listen on (default: 8080)
-      - CACHEBOX_PORT=6800
+      - PACHELARR_PORT=6800
       
       # Log level: DEBUG, INFO, WARNING, ERROR (default: INFO)
-      - CACHEBOX_LOG_LEVEL=INFO
+      - PACHELARR_LOG_LEVEL=INFO
       
       # Seeders boost value added to cached torrents (default: 10000)
-      - CACHEBOX_SEEDERS_BOOST=10000
+      - PACHELARR_SEEDERS_BOOST=10000
       
       # Fallback query for category-only requests (improves Sonarr "Test" behavior)
       # Set to empty string to disable (default: "")
-      - CACHEBOX_TEST_FALLBACK_QUERY=
+      - PACHELARR_TEST_FALLBACK_QUERY=
       
       # === TMDB CONFIGURATION ===
       # TMDB API key for looking up movie/TV titles from IMDb/TVDB/TMDB IDs

@@ -8,16 +8,16 @@ from lxml import etree as ET
 from urllib.parse import urljoin, parse_qs, unquote
 
 app = FastAPI()
-CACHEBOX_LOG_LEVEL = os.getenv("CACHEBOX_LOG_LEVEL", "INFO").upper()
-logging.basicConfig(level=getattr(logging, CACHEBOX_LOG_LEVEL, logging.INFO))
+PACHELARR_LOG_LEVEL = os.getenv("PACHELARR_LOG_LEVEL", "INFO").upper()
+logging.basicConfig(level=getattr(logging, PACHELARR_LOG_LEVEL, logging.INFO))
 logger = logging.getLogger("cachebox")
 
 PROWLARR_URL = os.getenv("PROWLARR_URL")
 PROWLARR_API_KEY = os.getenv("PROWLARR_API_KEY")
 TORBOX_API_KEY = os.getenv("TORBOX_API_KEY")
-CACHEBOX_API_KEY = os.getenv("CACHEBOX_API_KEY")
+PACHELARR_API_KEY = os.getenv("PACHELARR_API_KEY")
 # Seed count used to boost cached items (default: 10000)
-CACHEBOX_SEEDERS_BOOST = int(os.getenv("CACHEBOX_SEEDERS_BOOST", "10000"))
+PACHELARR_SEEDERS_BOOST = int(os.getenv("PACHELARR_SEEDERS_BOOST", "10000"))
 
 TORBOX_CHECK_URL = os.getenv("TORBOX_CHECK_URL", "https://api.torbox.app/v1/api/torrents/checkcached")
 _configured_chunk = int(os.getenv("TORBOX_CHUNK_SIZE", "100"))
@@ -32,7 +32,7 @@ TRACKER_SCRAPE_BATCH_SIZE = int(os.getenv("TRACKER_SCRAPE_BATCH_SIZE", "50"))
 # Optional query fallback used when an incoming search contains categories but no
 # query. Useful to improve Sonarr's "Test" indexer behavior where Sonarr sends a
 # 0-query category-only search to verify indexer connectivity.
-CACHEBOX_TEST_FALLBACK_QUERY = os.getenv("CACHEBOX_TEST_FALLBACK_QUERY", "")
+PACHELARR_TEST_FALLBACK_QUERY = os.getenv("PACHELARR_TEST_FALLBACK_QUERY", "")
 # TMDB API key for looking up movie/TV titles from IMDb/TVDB/TMDB IDs
 # Get a free key at: https://www.themoviedb.org/settings/api
 # This is REQUIRED for ID-based searches to work with indexers that don't support IDs
@@ -264,9 +264,9 @@ async def handle_search(params):
     has_identifier = any(params.get(k) for k in ('rid', 'tvdbid', 'imdbid', 'tmdbid', 'tvmaze', 'traktid', 'doubanid'))
     # If query is missing but categories/indexerIds are present and a fallback is configured,
     # substitute it early so downstream logic picks it up. Don't apply fallback if identifiers are present.
-    if not query and not has_identifier and (params.get('cat') or params.get('indexerIds') or params.get('indexerId')) and CACHEBOX_TEST_FALLBACK_QUERY:
-        logger.info(f"Incoming category-only request detected; applying fallback query '{CACHEBOX_TEST_FALLBACK_QUERY}'")
-        query = CACHEBOX_TEST_FALLBACK_QUERY
+    if not query and not has_identifier and (params.get('cat') or params.get('indexerIds') or params.get('indexerId')) and PACHELARR_TEST_FALLBACK_QUERY:
+        logger.info(f"Incoming category-only request detected; applying fallback query '{PACHELARR_TEST_FALLBACK_QUERY}'")
+        query = PACHELARR_TEST_FALLBACK_QUERY
     categories = [cat for cat in params.get('cat', '').split(',') if cat]
 
     async with aiohttp.ClientSession() as session:
@@ -324,7 +324,7 @@ async def handle_search(params):
         # Allow category-only or indexerIds-only searches to be forwarded to Prowlarr so tools like
         # Sonarr can test the indexer and receive results (or an explicit empty result set from
         # Prowlarr). Additionally, if an optional fallback query is configured via
-        # `CACHEBOX_TEST_FALLBACK_QUERY`, use it for category-only requests so Sonarr's test
+        # `PACHELARR_TEST_FALLBACK_QUERY`, use it for category-only requests so Sonarr's test
         # returns sample results.
         if not query and not (search_kwargs.get('categories') or search_kwargs.get('indexerIds')) and not has_identifier:
             logger.info('No query nor identifier nor categories/indexerIds present for search; returning empty feed to avoid Prowlarr 400')
@@ -333,13 +333,13 @@ async def handle_search(params):
         # this is likely a category-only call (Sonarr test). If a fallback is
         # configured, substitute it as the query and log the behavior.
         # Don't apply fallback if we have identifiers (imdbid, tvdbid, etc.)
-        if not query and not has_identifier and ((params.get('cat') or search_kwargs.get('categories')) or (params.get('indexerIds') or search_kwargs.get('indexerId'))) and CACHEBOX_TEST_FALLBACK_QUERY:
-            logger.info(f"Category-only search detected via raw params; substituting fallback query '{CACHEBOX_TEST_FALLBACK_QUERY}' for test behavior")
+        if not query and not has_identifier and ((params.get('cat') or search_kwargs.get('categories')) or (params.get('indexerIds') or search_kwargs.get('indexerId'))) and PACHELARR_TEST_FALLBACK_QUERY:
+            logger.info(f"Category-only search detected via raw params; substituting fallback query '{PACHELARR_TEST_FALLBACK_QUERY}' for test behavior")
             # Replace the query on the parameters we will pass to Prowlarr
-            search_kwargs['query'] = CACHEBOX_TEST_FALLBACK_QUERY
-            query = CACHEBOX_TEST_FALLBACK_QUERY
+            search_kwargs['query'] = PACHELARR_TEST_FALLBACK_QUERY
+            query = PACHELARR_TEST_FALLBACK_QUERY
         # Debugging: log fallback / query state for incoming search verification
-        logger.info(f"Search debug: query={query!r} categories={search_kwargs.get('categories')!r} indexerIds={search_kwargs.get('indexerIds')!r} fallback={CACHEBOX_TEST_FALLBACK_QUERY!r}")
+        logger.info(f"Search debug: query={query!r} categories={search_kwargs.get('categories')!r} indexerIds={search_kwargs.get('indexerIds')!r} fallback={PACHELARR_TEST_FALLBACK_QUERY!r}")
         logger.debug(f"search_kwargs full: {search_kwargs}")
 
         prowlarr_results = await search_prowlarr(session, search_kwargs)
@@ -434,9 +434,9 @@ async def search_prowlarr(session, search_kwargs):
         # caller enabled a fallback query via env var, use it to avoid a 400 from
         # Prowlarr and provide Sonarr with a testable response.
         # Don't apply fallback if we have identifiers (they're valid searches on their own)
-        if not params.get('query') and not has_identifier and (params.get('categories') or params.get('indexerIds')) and CACHEBOX_TEST_FALLBACK_QUERY:
-            logger.info(f"Prowlarr request missing query; adding fallback query '{CACHEBOX_TEST_FALLBACK_QUERY}'")
-            params['query'] = CACHEBOX_TEST_FALLBACK_QUERY
+        if not params.get('query') and not has_identifier and (params.get('categories') or params.get('indexerIds')) and PACHELARR_TEST_FALLBACK_QUERY:
+            logger.info(f"Prowlarr request missing query; adding fallback query '{PACHELARR_TEST_FALLBACK_QUERY}'")
+            params['query'] = PACHELARR_TEST_FALLBACK_QUERY
         # Pass paging params to Prowlarr when present (limit/offset)
         if 'limit' in search_kwargs and search_kwargs['limit']:
             try:
@@ -629,7 +629,7 @@ def consolidate_all_items(prowlarr_results, cached_status, uncached_seeders=None
 
     - Merge trackers for the hash from all magnet URIs
     - Choose a canonical item (highest original seeders) for metadata
-    - For cached items apply CACHEBOX_SEEDERS_BOOST; for uncached use uncached_seeders mapping
+    - For cached items apply PACHELARR_SEEDERS_BOOST; for uncached use uncached_seeders mapping
     - Returns a list of consolidated items
     """
     from copy import deepcopy
@@ -699,7 +699,7 @@ def consolidate_all_items(prowlarr_results, cached_status, uncached_seeders=None
                 s = int(canonical.get('seeders', 0) or 0)
             except Exception:
                 s = 0
-            canonical['seeders'] = max(s, CACHEBOX_SEEDERS_BOOST)
+            canonical['seeders'] = max(s, PACHELARR_SEEDERS_BOOST)
         else:
             # uncached -> use uncached_seeders if present
             if uncached_seeders and key in uncached_seeders:
@@ -1088,7 +1088,7 @@ def generate_torznab_xml(prowlarr_results, cached_status, uncached_seeders=None)
             seeders = 0
         if is_cached:
             # Apply configured boost but don't reduce seeders if original is higher
-            seeders = max(seeders, CACHEBOX_SEEDERS_BOOST)
+            seeders = max(seeders, PACHELARR_SEEDERS_BOOST)
             logger.debug(f"Boosting seeders for cached item {info_hash}: {seeders}")
         else:
             # If we have a computed uncached seed count, apply max
@@ -1132,5 +1132,5 @@ def create_empty_rss():
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.getenv("CACHEBOX_PORT", 8080))
+    port = int(os.getenv("PACHELARR_PORT", 8080))
     uvicorn.run("main:app", host="0.0.0.0", port=port)

@@ -104,7 +104,7 @@ docker run -d \
   -e PROWLARR_URL=http://your-prowlarr-host:9696 \
   -e PROWLARR_API_KEY=your_prowlarr_api_key_here \
   -e TORBOX_API_KEY=your_torbox_api_key_here \
-  -e CACHEBOX_API_KEY=your_pachelarr_api_key_here \
+  -e PACHELARR_API_KEY=your_pachelarr_api_key_here \
   -e TMDB_API_KEY=your_tmdb_api_key_here \
   --restart unless-stopped \
   ghcr.io/northernpowerhouse/pachelarr:latest
@@ -148,21 +148,21 @@ services:
       - TORBOX_API_KEY=your_torbox_api_key_here
       
       # Pachelarr API key (used by Radarr/Sonarr to authenticate)
-      - CACHEBOX_API_KEY=your_pachelarr_api_key_here
+      - PACHELARR_API_KEY=your_pachelarr_api_key_here
       
       # === PACHELARR SETTINGS ===
       # Port to listen on (default: 8080)
-      - CACHEBOX_PORT=6800
+      - PACHELARR_PORT=6800
       
       # Log level: DEBUG, INFO, WARNING, ERROR (default: INFO)
-      - CACHEBOX_LOG_LEVEL=INFO
+      - PACHELARR_LOG_LEVEL=INFO
       
       # Seeders boost value added to cached torrents (default: 10000)
-      - CACHEBOX_SEEDERS_BOOST=10000
+      - PACHELARR_SEEDERS_BOOST=10000
       
       # Fallback query for category-only requests (improves Sonarr "Test" behavior)
       # Set to empty string to disable (default: "")
-      - CACHEBOX_TEST_FALLBACK_QUERY=
+      - PACHELARR_TEST_FALLBACK_QUERY=
       
       # === TMDB CONFIGURATION ===
       # TMDB API key for looking up movie/TV titles from IMDb/TVDB/TMDB IDs
@@ -248,21 +248,21 @@ services:
       - TORBOX_API_KEY=your_torbox_api_key_here
       
       # Pachelarr API key (used by Radarr/Sonarr to authenticate)
-      - CACHEBOX_API_KEY=your_pachelarr_api_key_here
+      - PACHELARR_API_KEY=your_pachelarr_api_key_here
       
       # === PACHELARR SETTINGS ===
       # Port to listen on (default: 8080)
-      - CACHEBOX_PORT=6800
+      - PACHELARR_PORT=6800
       
       # Log level: DEBUG, INFO, WARNING, ERROR (default: INFO)
-      - CACHEBOX_LOG_LEVEL=INFO
+      - PACHELARR_LOG_LEVEL=INFO
       
       # Seeders boost value added to cached torrents (default: 10000)
-      - CACHEBOX_SEEDERS_BOOST=10000
+      - PACHELARR_SEEDERS_BOOST=10000
       
       # Fallback query for category-only requests (improves Sonarr "Test" behavior)
       # Set to empty string to disable (default: "")
-      - CACHEBOX_TEST_FALLBACK_QUERY=
+      - PACHELARR_TEST_FALLBACK_QUERY=
       
       # === TMDB CONFIGURATION ===
       # TMDB API key for looking up movie/TV titles from IMDb/TVDB/TMDB IDs
@@ -325,7 +325,7 @@ Edit `docker-compose.yml` and update these required values:
 - PROWLARR_API_KEY=your_prowlarr_api_key_here
 - TORBOX_API_KEY=your_torbox_api_key_here
 - TMDB_API_KEY=your_tmdb_api_key_here
-- CACHEBOX_API_KEY=your_pachelarr_api_key_here  # Any random string
+- PACHELARR_API_KEY=your_pachelarr_api_key_here  # Any random string
 ```
 
 5. **Start the service**
@@ -337,7 +337,7 @@ docker compose up -d
 
 Add Pachelarr as a Torznab indexer:
 - **URL:** `http://pachelarr-host:6800/api`
-- **API Key:** Whatever you set for `CACHEBOX_API_KEY`
+- **API Key:** Whatever you set for `PACHELARR_API_KEY`
 - **Categories:** 
   - Movies: 2000,2010,2020,2030,2040,2045,2050,2060,2070,2080
   - TV: 5000,5010,5020,5030,5040,5045,5050,5060,5070,5080
@@ -353,7 +353,7 @@ All configuration is done via environment variables in `docker-compose.yml`.
 | `PROWLARR_URL` | Prowlarr instance URL | `http://192.168.1.100:9696` |
 | `PROWLARR_API_KEY` | Prowlarr API key | `abc123...` |
 | `TORBOX_API_KEY` | Torbox API key | `xyz789...` |
-| `CACHEBOX_API_KEY` | API key for Radarr/Sonarr to authenticate | Any string |
+| `PACHELARR_API_KEY` | API key for Radarr/Sonarr to authenticate | Any string |
 | `TMDB_API_KEY` | TMDB API key for ID lookups | Get at themoviedb.org |
 
 ### Optional Settings
@@ -361,10 +361,10 @@ All configuration is done via environment variables in `docker-compose.yml`.
 #### Pachelarr Settings
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `CACHEBOX_PORT` | `8080` | Port to listen on |
-| `CACHEBOX_LOG_LEVEL` | `INFO` | Log verbosity: DEBUG, INFO, WARNING, ERROR |
-| `CACHEBOX_SEEDERS_BOOST` | `10000` | Seeders added to cached torrents |
-| `CACHEBOX_TEST_FALLBACK_QUERY` | `""` | Fallback query for category-only searches (improves Sonarr "Test" button) |
+| `PACHELARR_PORT` | `8080` | Port to listen on |
+| `PACHELARR_LOG_LEVEL` | `INFO` | Log verbosity: DEBUG, INFO, WARNING, ERROR |
+| `PACHELARR_SEEDERS_BOOST` | `10000` | Seeders added to cached torrents |
+| `PACHELARR_TEST_FALLBACK_QUERY` | `""` | Fallback query for category-only searches (improves Sonarr "Test" button) |
 
 #### Torbox Settings
 | Variable | Default | Description |
@@ -444,13 +444,13 @@ Look for `[CACHED]` prefix in results - these torrents are instantly available.
 - Verify Prowlarr has working indexers
 
 ### Radarr/Sonarr can't connect
-- Confirm `CACHEBOX_API_KEY` matches in both places
+- Confirm `PACHELARR_API_KEY` matches in both places
 - Check port 6800 is accessible
 - Verify container is running: `docker ps`
 
 ### Enable debug logging
 ```yaml
-- CACHEBOX_LOG_LEVEL=DEBUG
+- PACHELARR_LOG_LEVEL=DEBUG
 ```
 Then restart: `docker compose restart`
 
